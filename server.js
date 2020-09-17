@@ -11,7 +11,7 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname + "/app.html"));
 });
 
-app.get("/connections", async (req, res) => {
+app.get("/connections/{keyword}", async (req, res) => {
   try {
     const data = await info.edges;
     res.json(JSON.stringify(data));
@@ -20,8 +20,9 @@ app.get("/connections", async (req, res) => {
   }
 });
 
-app.get("/nodes", async (req, res) => {
+app.get("/nodes{keyword}", async (req, res) => {
   try {
+    console.log(req.query);
     const data = await info.nodes;
     res.json(JSON.stringify(data));
   } catch (e) {

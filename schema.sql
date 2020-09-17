@@ -21,5 +21,6 @@ CREATE TABLE IF NOT EXISTS containers (
 CREATE TABLE IF NOT EXISTS keywords (
     keyword varchar(100) NOT NULL,
     profile_url varchar(100) NOT NULL,
-    FOREIGN KEY (profile_url) REFERENCES users(profile_url)
+    FOREIGN KEY (profile_url) REFERENCES users(profile_url),
+    UNIQUE(keyword, profile_url)
 );
