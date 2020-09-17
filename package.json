@@ -2,7 +2,7 @@
   "name": "graph",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,6 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "google-spreadsheet": "^3.0.13",
+    "nodemon": "^2.0.4",
     "request": "^2.88.2",
     "requests": "^0.3.0",
     "require": "^2.4.20",

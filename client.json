@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "virtual-indexer-288711",
+  "private_key_id": "fab8e6f7125696f4e0c62783b974cbf50d359e71",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDDkhNVOEKmNF8Q\nQKec998F/gl2W5EoCdN3j98lRA49CHX8MI9MBnRaph1DiXmEA8B/sp7vT8eR0wNZ\nH9LkhyinIo5vVpNY1zM12XiClAJn9zI7Fj4j5AiCxVA+DvZ58qJjk4MWPHzNX0DM\nQH6kjDAhrv5iUaI0z7lDCpL7Enl2olFn9xPILWcDMAqOK4Gb93PkV43WANoE/Ezp\nsYmrBBe8wkG/CRoaUB5dqzIVG7hMdrlg5rEAWzddUsJrpRtezv2nYmNZOYInqIQ0\nkQIYht3E3833sT2hqXamdrr7C9hJsTusTz27bpU4QUM3q5+H1gFL0zcS+jkDVy52\nMh50kCRFAgMBAAECggEABxKn3KukYW1rHg6F4VE87B25YDdEjdL5JmL6JNdhanH9\nY7RVN7XTYcSN3LeX658qcukrV/1QeuTLmLQOxPwMYNWzmrGMslL/bkxMpZr5EU3T\n2mYzXh9CSDR0R/eeO1/RNqe1lHQgkVmHYZEC44GRwLjFnhmqCPNAQH1H6TOhrUQh\nB8++x3UUTUMzCTIr8ryarg55DPpEYwCGNCGBygYncOGcVCvsjAMIhD2TGGCae3B6\n/wfA9Ho2iRzcUflRMkDqLrxpqlH1aAUCus2qLTpDq9hWXCvaOF963OpZP+yofwbe\nisiexDPXKoGn4MTJRQRxxyyDNlizlKbWr4XtxUG7cQKBgQDh03quLZ91YJKc6I/x\nMSTZMvS8CfXuXNIuf2jJCbnhRwSrVXce+UEC9LoeR4JaZ8rw2XBiG7wC1VEiqL3R\nsqE5IN++o/8j9SPbK/wZrF2zAuTIpEvsuNkCMDcxEp9zZ3w4Hvx4AcCG2G2G4s74\nCwi1XzuZz/0xjAumh17DqIRPmQKBgQDds7BW7bgKHcymb2HxkEKecBiNMtCuo3nK\nGOBewJUsyg3jRDnJKezUPP12UBIi5cXts4DAK3nQiJNalM3+x0uMlA4hShr8G/ii\npSJwLw1LJhF27r6B5z6ZUoc9MRsJILR5sprhkym9sJ6JG3SMEwmo7Ocjscd7gHdv\nsyNbmubVjQKBgQCjrZF033J9M/LwMYvrCHCp0Mob5KhRDQv2UbiURi1o//19ZaPC\nWmzphJHF0pTDjAlGyoMvSOTbtNtq4J08eVlru80QM3OBD3PerqG5xfnf/s/uMU8q\nk8wOTv4h3lqd3brmPmdFYBe4ZPP12TykAfNc6lqboGnm2Je1Ktbfv6uuuQKBgHhB\nyOxORB8QrPq2vj0HEGvayCaHItUoDZ8HQWWENya1bzUQw/uPR0yUzLPJmRze4C8g\nyDz1GD16Z9uhjd+egSd/A+8gwGRyU7r9siGCFEboHl8R/7p9EeKe9obFxTF9UQgW\nTpb/eYvQax5aCy0UApBj+LjO7TLbq22mkQ5WhtHdAoGBALN7UP6w/2zJ0g0ddmOK\nf5atT4p7zeFwI9T1m1WPx+LxT1z0JIFD28adjcD6w32S7bgX+54yuzq2w9YzXtir\nj/gU35jBn+sQtx6YFyXoj0LD2pkfgSBZ/frHYmjrru3ktgh1gOx+e2hgDlViZlcf\ntUpzz5DFghaGR0kFW6n26vRt\n-----END PRIVATE KEY-----\n",
+  "client_email": "elenta@virtual-indexer-288711.iam.gserviceaccount.com",
+  "client_id": "108407743588726680281",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/elenta%40virtual-indexer-288711.iam.gserviceaccount.com"
+}

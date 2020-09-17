@@ -1,13 +1,42 @@
-let db = new sqlite3.Database("./test.db", (err) => {
-  if (err) {
-    return console.error(err.message);
-  }
-  console.log("Connected to the in-memory SQlite database.");
+const sqlite3 = require("sqlite3").verbose();
+
+
+const edges =  new Promise(async (resolve, reject) => {
+  let db = new sqlite3.Database("./test.db");
+  db.all(`select user_profile, mutual_connection from connections`, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    let temp = [];
+    rows.forEach((row) => {
+      temp.push({
+        from: row.user_profile,
+        to: row.mutual_connection,
+        physics: true,
+        smooth: { type: "cubicBezier" },
+      });
+    });
+    resolve(temp);
+  });
 });
 
-db.close((err) => {
-  if (err) {
-    return console.error(err.message);
-  }
-  console.log("Close the database connection.");
+const nodes = new Promise(async (resolve, reject) => {
+  let db = new sqlite3.Database("./test.db");
+  db.all(`select profile_url from users`, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    let temp = [];
+    rows.forEach((row) => {
+      temp.push({
+        id: row.profile_url,
+        size: 500,
+        label: row.profile_url,
+      });
+    });
+    resolve(temp);
+  });
 });
+
+exports.edges = edges;
+exports.nodes = nodes;

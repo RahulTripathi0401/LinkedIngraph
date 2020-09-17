@@ -25,29 +25,23 @@ async function node() {
 async function connections() {
   let connections = [];
   return new Promise((resolve, reject) => {
-    db.all(
-      `select user_profile, mutual_connection from connections`,
-      [],
-      (err, rows) => {
-        if (err) {
-          throw err;
-        }
-        rows.forEach((row) => {
-          connections.push({
-            from: row.user_profile,
-            to: row.mutual_connection,
-            physics: false,
-            smooth: { type: "cubicBezier" },
-          });
-          console.log();
-        });
-        resolve(connections);
+    db.all(`select user_profile, mutual_connection from connections`, [], (err, rows) => {
+      if (err) {
+        throw err;
       }
-    );
+      rows.forEach((row) => {
+        connections.push({
+          from: row.user_profile,
+          to: row.mutual_connection,
+          physics: false,
+          smooth: { type: "cubicBezier" },
+        });
+        console.log();
+      });
+      resolve(connections);
+    });
   });
 }
-
-
 
 async function main() {
   let test = await node();
