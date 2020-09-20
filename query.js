@@ -94,9 +94,7 @@ async function addToDB(userinfo, keyword) {
   let temp = [];
   for (let x of userinfo) {
     if (x.error) continue;
-    db.run(
-      `INSERT OR IGNORE INTO keywords(keyword, profile_url) VALUES("${keyword}", "${x.url}")`
-    );
+    db.run(`INSERT OR IGNORE INTO keywords(keyword, profile_url) VALUES("${keyword}", "${x.url}")`);
     x.lastName = x.lastName.replace(/"/g, "");
     x.firstName = x.firstName.replace(/"/g, "");
     if (x.sharedConnections) {
@@ -113,17 +111,13 @@ async function addToDB(userinfo, keyword) {
           db.run(
             `INSERT OR IGNORE INTO connections(user_profile, mutual_connection) VALUES("${x.url}", "${x.commonConnection1}")`
           );
-          db.run(
-            `INSERT OR IGNORE INTO users(profile_url) VALUES("${x.commonConnection1}")`
-          );
+          db.run(`INSERT OR IGNORE INTO users(profile_url) VALUES("${x.commonConnection1}")`);
         }
         if (x.commonConnection2) {
           db.run(
             `INSERT OR IGNORE INTO connections(user_profile, mutual_connection) VALUES("${x.url}", "${x.commonConnection2}")`
           );
-          db.run(
-            `INSERT OR IGNORE INTO users(profile_url) VALUES("${x.commonConnection2}")`
-          );
+          db.run(`INSERT OR IGNORE INTO users(profile_url) VALUES("${x.commonConnection2}")`);
         }
       }
     } else {
@@ -145,9 +139,7 @@ async function addMutualConnections(profile_url, userinfo, keyword) {
   db.run(
     `INSERT OR IGNORE INTO users(profile_url, first_name, last_name) VALUES("${userinfo.url}", "${userinfo.firstName}", "${userinfo.lastName}")`
   );
-  db.run(
-    `INSERT OR IGNORE INTO keywords(profile_url, keyword) VALUES("${userinfo.url}", "${keyword}")`
-  );
+  db.run(`INSERT OR IGNORE INTO keywords(profile_url, keyword) VALUES("${userinfo.url}", "${keyword}")`);
 }
 
 let awsJSON = async function (AWSurl) {
@@ -230,6 +222,7 @@ async function scrapeMutualConnections(commonURLS) {
     });
     if (information.length !== 0) continue;
     const containerID = await launchAgent(x);
+    console.log(containerID);
     containerIds.push(containerID);
   }
   return containerIds;
@@ -245,24 +238,26 @@ async function data(searchKeyWord) {
       resolve(rows);
     });
   });
-  if (information.length !== 0)
-    return Error(
-      "You have already searched for this term - scraping again will not add any information"
-    );
-  let ConatinerId = await launchAgent(searchKeyWord);
+  // if (information.length !== 0)
+  //   return Error("You have already searched for this term - scraping again will not add any information");
+  // let ConatinerId = await launchAgent(searchKeyWord);
   // Hack need to find a better way to wait for response
-  console.log(ConatinerId);
+  console.log(2428408728255492);
 
-  await sleep(1500000); // Equivalent to 25 minutes
+  // await sleep(1500000); // Equivalent to 25 minutes
 
-  let userinfo = await info("5238730920386243");
-
+  let userinfo = await info("2428408728255492");
+  if (userinfo.jsonUrl) {
+    userinfo = await awsJSON(userinfo.jsonUrl);
+  }
+  console.log(userinfo);
   const commonConnections = await addToDB(userinfo, searchKeyWord);
   console.log(commonConnections);
   let containerIds = await scrapeMutualConnections(commonConnections);
-
-  // await sleep(900000);
-  await getMutualConnections(containerIds, searchKeyWord);
+  // console.log(containerIds);
+  // await sleep(300000);
+  // console.log("end sleep");
+  // await getMutualConnections(containerIds, searchKeyWord);
 }
 
 /*
