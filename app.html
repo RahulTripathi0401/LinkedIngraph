@@ -1,23 +1,14 @@
 <html>
   <head>
     <title>LinkedIn graph Visualisation</title>
-    <style type="text/css">
-      #mynetwork {
-        width: 100%;
-        height: 100%;
-        border: 1px solid lightgray;
-      }
-    </style>
+    <link rel="stylesheet" href="style.css" />
     <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
   </head>
   <body>
-    <p>Dynmaic LinkedIn graph Visualisation</p>
-    <div>
+    <h1 class="title">Dynmaic LinkedIn graph Visualisation</h1>
+    <div class="keyword">
       <input id="searchKeyword" type="text" placeholder="Keyword" />
       <button id="existing">Search Existing Graphs</button>
-    </div>
-    <div>
-      <input type="text" placeholder="Keyword" id="search" />
       <button id="show">Create New Graph</button>
     </div>
     <div id="mynetwork"></div>
@@ -78,7 +69,7 @@
       });
 
       showGraph.addEventListener("click", async () => {
-        const searchWord = String(document.getElementById("search").value);
+        const searchWord = String(document.getElementById("searchKeyword").value);
         console.log("here");
         let data = await fetch(`http://localhost:3000/launch/${searchWord}`, {
           method: "POST",

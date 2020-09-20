@@ -49,7 +49,7 @@ app.post("/launch/:keyword", async (req, res) => {
     const searchParameter = String(req.params.keyword);
     console.log("here");
     await query.data(searchParameter);
-    res.send("hopefully everything worked");
+    res.send("Scrape Finished");
   } catch (e) {
     res.send(e);
   }

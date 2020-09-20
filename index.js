@@ -1,52 +1,21 @@
-const sqlite3 = require("sqlite3").verbose();
-
-let db = new sqlite3.Database("./test.db", (err) => {
-  if (err) {
-    return console.error(err.message);
-  }
-  console.log("Connected to the in-memory SQlite database.");
-});
-
-async function node() {
-  let nodes = [];
+let launchAgent = async function (search) {
+  const options = {
+    method: "POST",
+    url: "https://api.phantombuster.com/api/v2/agents/launch",
+    headers: {
+      "content-type": "application/json",
+      "x-phantombuster-key": "CBCC4KSe2uJhEoB1vOk1Vmlo96j1ss5KpM6YlKt09lU",
+    },
+    body: {
+      id: searchByKeywordID,
+      arguments: `{ 	"sessionCookie": "AQEDAQQJx2IFPUfWAAABdC4I1ukAAAF0UhVa6VYAR_i-LUnBtTQ-mp7mRGuSP5mdw7QNaf47_Kwugyinnx0V6BE1xry4vfK2GVb9DG8j4XlgTshq4vxNbuoSIOPJyUAWowsBVdGickWd5RzgcDN1vdls", 	"search": "${search}", "circles": { 		"first": false, 		"second": true, 		"third": true 	}, 	"category": "People", 	"csvName": "tmp", 	"removeDuplicateProfiles": false, 	"watcherMode": false }`,
+    },
+    json: true,
+  };
   return new Promise((resolve, reject) => {
-    db.all(`select profile_url from users`, [], (err, rows) => {
-      if (err) {
-        throw err;
-      }
-      rows.forEach((row) => {
-        nodes.push({ id: row.profile_url, size: 150, label: row.profile_url });
-      });
-      resolve(nodes);
+    request(options, async function (error, response, body) {
+      if (error) throw new Error(error);
+      resolve(body.containerId);
     });
   });
-}
-
-async function connections() {
-  let connections = [];
-  return new Promise((resolve, reject) => {
-    db.all(`select user_profile, mutual_connection from connections`, [], (err, rows) => {
-      if (err) {
-        throw err;
-      }
-      rows.forEach((row) => {
-        connections.push({
-          from: row.user_profile,
-          to: row.mutual_connection,
-          physics: false,
-          smooth: { type: "cubicBezier" },
-        });
-        console.log();
-      });
-      resolve(connections);
-    });
-  });
-}
-
-async function main() {
-  let test = await node();
-  let another = await connections();
-  nodes = test;
-}
-
-main();
+};

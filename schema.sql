@@ -13,11 +13,6 @@ CREATE TABLE IF NOT EXISTS connections (
     UNIQUE(user_profile, mutual_connection)
 );
 
-CREATE TABLE IF NOT EXISTS containers (
-    container_id INTEGER NOT NULL,
-    UNIQUE(container_id)
-);
-
 CREATE TABLE IF NOT EXISTS keywords (
     keyword varchar(100) NOT NULL,
     profile_url varchar(100) NOT NULL,

@@ -1,12 +1,15 @@
 const request = require("request");
 const sqlite3 = require("sqlite3").verbose();
-const credentials = require(`./client.json`);
 const searchByKeywordID = "3980003998118353";
-const searchMutualConnectionsID = "3032528682541051";
 const APIToken = "CBCC4KSe2uJhEoB1vOk1Vmlo96j1ss5KpM6YlKt09lU";
 const defulatCookie =
   "AQEDAQQJx2IFPUfWAAABdC4I1ukAAAF0UhVa6VYAR_i-LUnBtTQ-mp7mRGuSP5mdw7QNaf47_Kwugyinnx0V6BE1xry4vfK2GVb9DG8j4XlgTshq4vxNbuoSIOPJyUAWowsBVdGickWd5RzgcDN1vdls";
 const db = new sqlite3.Database("./test.db");
+
+/**
+ * @param search The search keyword passed into the function
+ * @returns a promise which resolves to the containerID associated with the keyword search
+ */
 
 let launchAgent = async function (search) {
   const options = {
@@ -30,24 +33,10 @@ let launchAgent = async function (search) {
   });
 };
 
-let ids = async function (agentID) {
-  let options = {
-    method: "GET",
-    url: "https://api.phantombuster.com/api/v2/containers/fetch-all",
-    qs: { agentId: agentID },
-    headers: {
-      accept: "application/json",
-      "x-phantombuster-key": APIToken,
-    },
-  };
-
-  return new Promise((resolve, reject) => {
-    request(options, function (error, response, body) {
-      if (error) throw new Error(error);
-      resolve(JSON.parse(body));
-    });
-  });
-};
+/**
+ * @param containerId the containerId assocaited with a search
+ * @returns A JSON object that contains the result of that containerId
+ */
 
 let info = async function (containerId) {
   const options = {
@@ -68,41 +57,55 @@ let info = async function (containerId) {
   });
 };
 
-let getResults = async function (containerId) {
-  const options = {
-    method: "GET",
-    url: "https://api.phantombuster.com/api/v2/containers/fetch-output",
-    qs: { id: containerId },
-    headers: {
-      accept: "application/json",
-      "x-phantombuster-key": APIToken,
-    },
-  };
-
-  request(options, function (error, response, body) {
-    if (error) throw new Error(error);
-
-    console.log(body);
-  });
-};
-
+/**
+ *
+ * @param {*} ms The amount of time to sleep in ms
+ */
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+/**
+ * @param userinfo takes in a defined JSON object that has information about the user
+ * @param keyword the keyword associated with the a search e.g. "head of learning"
+ * @returns a list of common urls that have not been scraped. These common URLS contain
+ *  the mutual connection information which need to be later scraped.
+ */
 
 async function addToDB(userinfo, keyword) {
   let temp = [];
   for (let x of userinfo) {
+    // If for some reason the object has an error
     if (x.error) continue;
+
+    // Insert into the keywords table the keyword and userprofile associated with that keyword. This is later
+    //  used to construct the graph.
     db.run(`INSERT OR IGNORE INTO keywords(keyword, profile_url) VALUES("${keyword}", "${x.url}")`);
-    x.lastName = x.lastName.replace(/"/g, "");
-    x.firstName = x.firstName.replace(/"/g, "");
+
+    // Came across an error where a user had a "" in their name, this removes all any quotation marks so
+    // it can be added to the db
+    x.lastName = x.lastName.replace(/"|`|'/g, "");
+    x.firstName = x.firstName.replace(/"|`|'/g, "");
+
+    // The JSON object returned has three types of connections, [commonConnection1, commonConnection2, allCommonConnections]
+    // If the user has an allCommonConnections, then we need to later scrape it, thus it is appended to a list which is
+    // returned by the function.
     if (x.sharedConnections) {
       if (x.allCommonConnections) {
+        let sql = `select * from users where commonConnections = "${x.allCommonConnections}"`;
+        let information = await new Promise((resolve, reject) => {
+          db.all(sql, [], (err, rows) => {
+            if (err) {
+              throw err;
+            }
+            resolve(rows);
+          });
+        });
         db.run(
           `INSERT OR IGNORE INTO users(profile_url, first_name, last_name, commonConnections) VALUES("${x.url}", "${x.firstName}", "${x.lastName}", "${x.allCommonConnections}")`
         );
-        temp.push(x.allCommonConnections);
+
+        // If the commonURL is already in the database, then there is no need to scrape it as we have already scraped the data
+        if (information.length === 0) temp.push(x.allCommonConnections);
       } else {
         db.run(
           `INSERT OR IGNORE INTO users(profile_url, first_name, last_name) VALUES("${x.url}", "${x.firstName}", "${x.lastName}")`
@@ -129,6 +132,12 @@ async function addToDB(userinfo, keyword) {
   return temp;
 }
 
+/**
+ *
+ * @param {*} profile_url The user profile
+ * @param {*} userinfo One of the user profile's connections
+ * @param {*} keyword Keyword to store in the database
+ */
 async function addMutualConnections(profile_url, userinfo, keyword) {
   if (userinfo.error) return;
   userinfo.firstName = userinfo.firstName.replace(/"/g, "");
@@ -142,6 +151,11 @@ async function addMutualConnections(profile_url, userinfo, keyword) {
   db.run(`INSERT OR IGNORE INTO keywords(profile_url, keyword) VALUES("${userinfo.url}", "${keyword}")`);
 }
 
+/**
+ *
+ * @param {*} AWSurl AWS url that contains the JSON result object
+ * @returns JSON object that contains the data
+ */
 let awsJSON = async function (AWSurl) {
   let options = {
     method: "GET",
@@ -163,7 +177,6 @@ let awsJSON = async function (AWSurl) {
 async function getMutualConnections(containers, keyword) {
   for (let x of containers) {
     if (x === null || x === undefined) continue;
-    // db.run(`INSERT OR IGNORE INTO containers(container_id) VALUES(${x})`);
     let TempData = await info(x);
     if (TempData != null) {
       if (TempData.jsonUrl) {
@@ -179,7 +192,6 @@ async function getMutualConnections(containers, keyword) {
               resolve(rows);
             });
           });
-
           let profile_url = information[0].profile_url;
           await addMutualConnections(profile_url, x, keyword);
         }
@@ -195,12 +207,9 @@ async function getMutualConnections(containers, keyword) {
             resolve(rows);
           });
         });
-        console.log("here");
-        console.log(information);
         let profile_url = information[0].profile_url;
-
         for (let k of mutalConnectionsInfo) {
-          // console.log(`${profile_url} --> ${k.url} else`);
+          console.log(`${profile_url} --> ${k.url}`);
           await addMutualConnections(profile_url, k, keyword);
         }
       }
@@ -211,18 +220,7 @@ async function getMutualConnections(containers, keyword) {
 async function scrapeMutualConnections(commonURLS) {
   let containerIds = [];
   for (let x of commonURLS) {
-    let sql = `select * from users where commonConnections = "${x}"`;
-    let information = await new Promise((resolve, reject) => {
-      db.all(sql, [], (err, rows) => {
-        if (err) {
-          throw err;
-        }
-        resolve(rows);
-      });
-    });
-    if (information.length !== 0) continue;
     const containerID = await launchAgent(x);
-    console.log(containerID);
     containerIds.push(containerID);
   }
   return containerIds;
@@ -238,15 +236,13 @@ async function data(searchKeyWord) {
       resolve(rows);
     });
   });
-  // if (information.length !== 0)
-  //   return Error("You have already searched for this term - scraping again will not add any information");
-  // let ConatinerId = await launchAgent(searchKeyWord);
+  if (information.length !== 0)
+    return Error("You have already searched for this term - scraping again will not add any information");
+  let ConatinerId = await launchAgent(searchKeyWord);
+  console.log(ConatinerId);
   // Hack need to find a better way to wait for response
-  console.log(2428408728255492);
-
-  // await sleep(1500000); // Equivalent to 25 minutes
-
-  let userinfo = await info("2428408728255492");
+  await sleep(1500000); // Equivalent to 25 minutes
+  let userinfo = await info(ConatinerId);
   if (userinfo.jsonUrl) {
     userinfo = await awsJSON(userinfo.jsonUrl);
   }
@@ -254,10 +250,8 @@ async function data(searchKeyWord) {
   const commonConnections = await addToDB(userinfo, searchKeyWord);
   console.log(commonConnections);
   let containerIds = await scrapeMutualConnections(commonConnections);
-  // console.log(containerIds);
-  // await sleep(300000);
-  // console.log("end sleep");
-  // await getMutualConnections(containerIds, searchKeyWord);
+  console.log(containerIds);
+  await getMutualConnections(containerIds, searchKeyWord);
 }
 
 /*
