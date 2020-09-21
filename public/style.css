@@ -53,3 +53,10 @@ body {
   width: 200px;
   border-radius: 5px;
 }
+
+#error {
+  background-color: #ff4136;
+  height: 30px;
+  border-radius: 5px;
+  color: #2c313b;
+}

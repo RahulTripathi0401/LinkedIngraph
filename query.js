@@ -27,7 +27,7 @@ let launchAgent = async function (search) {
   };
   return new Promise((resolve, reject) => {
     request(options, async function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) throw error;
       resolve(body.containerId);
     });
   });
@@ -50,7 +50,7 @@ let info = async function (containerId) {
   };
   return new Promise((resolve, reject) => {
     request(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) throw error;
       let fire = JSON.parse(body);
       resolve(JSON.parse(fire.resultObject));
     });
@@ -222,6 +222,7 @@ async function scrapeMutualConnections(commonURLS) {
   for (let x of commonURLS) {
     const containerID = await launchAgent(x);
     containerIds.push(containerID);
+    sleep(5000);
   }
   return containerIds;
 }
@@ -237,7 +238,7 @@ async function data(searchKeyWord) {
     });
   });
   if (information.length !== 0)
-    return Error("You have already searched for this term - scraping again will not add any information");
+    throw "You have already searched for this term - scraping again will not add any information";
   let ConatinerId = await launchAgent(searchKeyWord);
   console.log(ConatinerId);
   // Hack need to find a better way to wait for response

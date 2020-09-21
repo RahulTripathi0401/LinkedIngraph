@@ -10,12 +10,16 @@
       <input id="searchKeyword" type="text" placeholder="Keyword" />
       <button id="existing">Search Existing Graphs</button>
       <button id="show">Create New Graph</button>
+      <span id="error"></span>
+      <span id="success"></span>
     </div>
     <div id="mynetwork"></div>
 
     <script type="text/javascript">
       const showGraph = document.getElementById("show");
       const searchGraph = document.getElementById("existing");
+      const error = document.getElementById("error");
+      const success = document.getElementById("success");
       const options = {
         manipulation: false,
         height: "90%",
@@ -32,36 +36,44 @@
         },
       };
       searchGraph.addEventListener("click", async () => {
+        error.innerText = "";
+        success.innerText = "";
         const searchWord = String(document.getElementById("searchKeyword").value);
-        let flag = false;
-        let data = await fetch(`http://localhost:3000/connections/${searchWord}`, {
+        let flag = true;
+        let data = await fetch(`${this.window.location.href}connections/${searchWord}`, {
           method: "GET",
         })
-          .then((response) => {
+          .then(async (response) => {
             if (response.ok) {
-              flag = true;
               return response.json();
+            } else {
+              let info = JSON.parse(await response.json());
+              console.log(info);
+              error.innerText = info.error;
+              flag = false;
             }
           })
           .catch((err) => {
             // There was an error
             console.warn("Something went wrong.", err);
           });
-        const edges = JSON.parse(data);
-        data = await fetch(`http://localhost:3000/nodes/${searchWord}`, {
-          method: "GET",
-        })
-          .then((response) => {
-            if (response.ok) {
-              return response.json();
-            }
-          })
-          .catch((err) => {
-            // There was an error
-            console.warn("Something went wrong.", err);
-          });
+
         if (flag) {
+          const edges = JSON.parse(data);
+          data = await fetch(`${this.window.location.href}nodes/${searchWord}`, {
+            method: "GET",
+          })
+            .then(async (response) => {
+              if (response.ok) {
+                return response.json();
+              }
+            })
+            .catch((err) => {
+              // There was an error
+              console.warn("Something went wrong.", err);
+            });
           const nodes = JSON.parse(data);
+          success.innerText = `We have found a graph that matches the ${searchWord}, hold on while we create it !`;
           var container = document.getElementById("mynetwork");
           var info = { nodes: nodes, edges: edges };
           var gph = new vis.Network(container, info, options);
@@ -70,19 +82,19 @@
 
       showGraph.addEventListener("click", async () => {
         const searchWord = String(document.getElementById("searchKeyword").value);
-        console.log("here");
-        let data = await fetch(`http://localhost:3000/launch/${searchWord}`, {
+        error.innerHTML = "";
+        success.innerText = "Scraping Data this may take a while please be patient !";
+        let data = await fetch(`${this.window.location.href}launch/${searchWord}`, {
           method: "POST",
-        })
-          .then((response) => {
-            if (response.ok) {
-              return response.json();
-            }
-          })
-          .catch((err) => {
-            // There was an error
-            console.warn("Something went wrong.", err);
-          });
+        }).then(async (response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            let data = JSON.parse(await response.json());
+            success.innerText = "";
+            error.innerText = data.error;
+          }
+        });
       });
     </script>
   </body>
