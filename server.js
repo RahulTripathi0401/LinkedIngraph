@@ -1,15 +1,15 @@
 const express = require("express");
 const app = express();
-const port = 3000;
+const port = 3111;
 const path = require("path");
 var cors = require("cors");
 const info = require("./database");
 const query = require("./query");
 app.use(cors());
-app.use(express.static("public"));
+app.use(express.static("html"));
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname + "/public/app.html"));
+  res.sendFile(path.join(__dirname + "/html/index.html"));
 });
 
 app.get("/connections/:keyword", async (req, res) => {
