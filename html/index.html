@@ -1,101 +1,22 @@
 <html>
   <head>
-    <title>LinkedIn graph Visualisation</title>
+    <title>LinkedIn Graph Visualisation</title>
     <link rel="stylesheet" href="style.css" />
-    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <script src="/scripts/vis-network.js"></script>
   </head>
   <body>
-    <h1 class="title">Dynmaic LinkedIn graph Visualisation</h1>
+    <h1 class="title">Dynmaic LinkedIn Graph Visualisation</h1>
     <div class="keyword">
-      <input id="searchKeyword" type="text" placeholder="Keyword" />
+      <input id="searchKeyword" type="text" placeholder="Search URL" />
       <button id="existing">Search Existing Graphs</button>
       <button id="show">Create New Graph</button>
-      <span id="error"></span>
-      <span id="success"></span>
     </div>
+    <textarea id="cookies">
+      Enter your LinkedIn search cookies seperated by commas</textarea
+    >
+    <div id="error"></div>
+    <div id="success"></div>
     <div id="mynetwork"></div>
-
-    <script type="text/javascript">
-      const showGraph = document.getElementById("show");
-      const searchGraph = document.getElementById("existing");
-      const error = document.getElementById("error");
-      const success = document.getElementById("success");
-      const options = {
-        manipulation: false,
-        height: "90%",
-        layout: {
-          hierarchical: {
-            enabled: true,
-            levelSeparation: 300,
-          },
-        },
-        physics: {
-          hierarchicalRepulsion: {
-            nodeDistance: 300,
-          },
-        },
-      };
-      searchGraph.addEventListener("click", async () => {
-        error.innerText = "";
-        success.innerText = "";
-        const searchWord = String(document.getElementById("searchKeyword").value);
-        let flag = true;
-        let data = await fetch(`${this.window.location.href}connections/${searchWord}`, {
-          method: "GET",
-        })
-          .then(async (response) => {
-            if (response.ok) {
-              return response.json();
-            } else {
-              let info = JSON.parse(await response.json());
-              console.log(info);
-              error.innerText = info.error;
-              flag = false;
-            }
-          })
-          .catch((err) => {
-            // There was an error
-            console.warn("Something went wrong.", err);
-          });
-
-        if (flag) {
-          const edges = JSON.parse(data);
-          data = await fetch(`${this.window.location.href}nodes/${searchWord}`, {
-            method: "GET",
-          })
-            .then(async (response) => {
-              if (response.ok) {
-                return response.json();
-              }
-            })
-            .catch((err) => {
-              // There was an error
-              console.warn("Something went wrong.", err);
-            });
-          const nodes = JSON.parse(data);
-          success.innerText = `We have found a graph that matches the ${searchWord}, hold on while we create it !`;
-          var container = document.getElementById("mynetwork");
-          var info = { nodes: nodes, edges: edges };
-          var gph = new vis.Network(container, info, options);
-        }
-      });
-
-      showGraph.addEventListener("click", async () => {
-        const searchWord = String(document.getElementById("searchKeyword").value);
-        error.innerHTML = "";
-        success.innerText = "Scraping Data this may take a while please be patient !";
-        let data = await fetch(`${this.window.location.href}launch/${searchWord}`, {
-          method: "POST",
-        }).then(async (response) => {
-          if (response.ok) {
-            return response.json();
-          } else {
-            let data = JSON.parse(await response.json());
-            success.innerText = "";
-            error.innerText = data.error;
-          }
-        });
-      });
-    </script>
+    <script src="request.js"></script>
   </body>
 </html>

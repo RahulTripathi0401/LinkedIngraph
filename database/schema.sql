@@ -1,8 +1,9 @@
 CREATE TABLE IF NOT EXISTS users (
     profile_url varchar(100) PRIMARY KEY NOT NULL,
-    first_name varchar(30),
-    last_name varchar(30),
+    name varchar(60),
     commonConnections VARCHAR(300),
+    location VARCHAR(200),
+    companyID varchar(20),
     UNIQUE(profile_url)
 );
 
