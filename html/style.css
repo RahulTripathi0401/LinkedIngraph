@@ -43,6 +43,17 @@ body {
   margin: 0 10px;
   font-size: 15px;
   outline: none;
+  width: 600px;
+}
+
+#cookies {
+  margin-left: 110px;
+  outline: none;
+  font-size: 15px;
+  height: 30px;
+  border: none;
+  width: 1020px;
+  padding-top: 5px;
 }
 
 .keyword > button {
@@ -59,4 +70,9 @@ body {
   height: 30px;
   border-radius: 5px;
   color: #2c313b;
+  display: none;
+}
+
+#success {
+  margin: 10px 0 0 110px;
 }
