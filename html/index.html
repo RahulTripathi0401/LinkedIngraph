@@ -1,18 +1,26 @@
 <html>
   <head>
-    <title>LinkedIn Graph Visualisation</title>
+    <title>LinkedIn Graph Visualization</title>
     <link rel="stylesheet" href="style.css" />
     <script src="/scripts/vis-network.js"></script>
   </head>
   <body>
-    <h1 class="title">Dynmaic LinkedIn Graph Visualisation</h1>
+    <h1 class="title">Dynamic LinkedIn Graph Visualization</h1>
     <div class="keyword">
+
       <input id="searchKeyword" type="text" placeholder="Search URL" />
-      <button id="existing">Search Existing Graphs</button>
+      <select id="existing">Search Existing Graphs</select>
+
       <button id="show">Create New Graph</button>
     </div>
+    <div class="loading" style="display: none;" id="load"> 
+
+      <div class="loader"></div>
+      <h3>Loading graph this may take a minute</h3>
+    </div>
+
     <textarea id="cookies">
-      Enter your LinkedIn search cookies seperated by commas</textarea
+      Enter your LinkedIn search cookies separated by commas</textarea
     >
     <div id="error"></div>
     <div id="success"></div>

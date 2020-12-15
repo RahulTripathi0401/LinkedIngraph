@@ -3,6 +3,9 @@ const searchGraph = document.getElementById("existing");
 const error = document.getElementById("error");
 const success = document.getElementById("success");
 const textArea = document.getElementById("cookies");
+const load = document.getElementById("load");
+const existingGraphs = document.getElementById("existing");
+
 
 const options = {
   manipulation: false,
@@ -21,10 +24,29 @@ const options = {
     enabled: false,
     solver: "repulsion",
     repulsion: {
-      nodeDistance: 1000, // Put more distance between the nodes.
+      nodeDistance: 3000, // Put more distance between the nodes.
     },
   },
 };
+
+document.addEventListener("DOMContentLoaded", async function(event) {
+  await fetch(`http://localhost:3311/existing_graphs`)
+  .then(async (res) => {
+    let data = await res.json();
+    let keywords = data.keywords;
+    let first = document.createElement("option");
+    existingGraphs.appendChild(first);
+
+    console.log(keywords);
+    for (let i = 0; i < keywords.length; i += 1){
+      let select = document.createElement("option");
+      select.innerText = keywords[i].keyword;
+      existingGraphs.appendChild(select);
+    }
+  })
+});
+
+
 
 async function initialise() {
   error.innerText = "";
@@ -68,15 +90,18 @@ showGraph.addEventListener("click", async () => {
   });
 });
 
-searchGraph.addEventListener("click", async () => {
+searchGraph.addEventListener("change", async () => {
   initialise();
   let cookie = getCookies();
   if (!cookie) {
     return;
   }
+  console.log("here");
+  const e = document.getElementById("existing");
+  var url = e.options[e.selectedIndex].text;
 
   const searchWord = {
-    url: String(document.getElementById("searchKeyword").value),
+    url: String(url),
   };
   let data = await fetch(`${this.window.location.href}connections`, {
     method: "POST",
@@ -93,11 +118,6 @@ searchGraph.addEventListener("click", async () => {
     .catch((err) => {
       console.warn("Something went wrong.", err);
     });
-  if (data.data.length === 0) {
-    error.style.display = "block";
-    error.innerText = `The search url does not exist in the database`;
-    return;
-  }
   const edges = data.data;
   data = await fetch(`${this.window.location.href}nodes`, {
     method: "POST",
@@ -117,9 +137,14 @@ searchGraph.addEventListener("click", async () => {
     });
   const nodes = data.data;
   console.log(nodes);
-  success.innerText = `We have found a graph that matches the ${searchWord}, hold on while we create it !`;
+  load.style.display = 'block';
+  // success.innerText = `We have found a graph that matches the ${searchWord}, hold on while we create it !`;
   var container = document.getElementById("mynetwork");
   var info = { nodes: nodes, edges: edges };
-  var gph = new vis.Network(container, info, options);
-  gph.stabilize();
+  var gph = await new vis.Network(container, info, options);
+  await gph.stabilize();
+  console.log("done");
+  setTimeout(function () {
+  load.style.display = 'none';
+}, 1500);
 });
