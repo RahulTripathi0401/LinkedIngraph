@@ -30,7 +30,7 @@ const options = {
 };
 
 document.addEventListener("DOMContentLoaded", async function(event) {
-  await fetch(`http://localhost:3311/existing_graphs`)
+  await fetch(`http://206.189.155.84/existing_graphs`)
   .then(async (res) => {
     let data = await res.json();
     let keywords = data.keywords;
